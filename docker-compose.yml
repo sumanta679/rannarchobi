@@ -1,0 +1,21 @@
+webapp:
+  restart: unless-stopped
+  build: ./webapp
+  expose:
+    - "8000"
+  volumes:
+    - .:/usr/data/images
+  env_file: .env
+  command: /usr/local/bin/gunicorn -w 2 -b :8000 app:app
+
+nginx:
+  restart: unless-stopped
+  build: ./nginx/
+  ports:
+    - 80:80
+  volumes:
+    - /www/static
+  volumes_from:
+    - webapp
+  links:
+    - webapp:webapp
